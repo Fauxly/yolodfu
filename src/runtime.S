@@ -487,7 +487,8 @@ post_mmu:
     str  w17, [x16]
     dsb  sy
 
-    // T8020 iBoot-3865.0.0.4.7 receive wrapper entry. Its unique ROM caller
+    // T8020 SecureROM iBoot-3865.0.0.4.7 receive wrapper entry.
+    // Its unique ROM caller
     // supplies x0=destination and x1=maximum length. The local .4.6 reference
     // places the same function at 0x10000e234 and must not drive this target.
     ldr  x0, =RECEIVE_BASE

@@ -1,4 +1,4 @@
-"""Exact iBoot-3865.0.0.4.7 iBSS writes used by T8020 yoloDFU."""
+"""Exact mBoot-18000.120.36 iBSS writes used by T8020 yoloDFU."""
 
 from __future__ import annotations
 
