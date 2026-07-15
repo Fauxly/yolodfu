@@ -39,9 +39,20 @@ the compressed Pongo payload before writing the container.
   vector, and loader transport.
 - PongoOS owns the next-stage kernel handoff.
 
-## Attribution
+## Credits
 
-The loader mechanism was reconstructed from the openra1n payload as reference
-evidence. The maintained loader is standalone ARM64 assembly and reproduces
-the reference 512-byte binary exactly; openra1n is not a build dependency or
-Git upstream of this repository.
+The yoloDFU mechanism was developed with
+[mineek/openra1n](https://github.com/mineek/openra1n) as source-level reference
+evidence and [checkra1n](https://checkra.in/) as the behavioral compatibility
+reference. The maintained loader is standalone ARM64 assembly and reproduces
+the openra1n reference loader's 512-byte binary exactly; neither project is a
+build dependency or Git upstream of this repository.
+
+Thanks to the openra1n contributors and checkra1n team for publishing the
+reference work that made this implementation possible.
+
+## Disclaimer
+
+This repository is for security research, device recovery research, and
+devices you own or have permission to test. Use it responsibly and follow
+local laws.
