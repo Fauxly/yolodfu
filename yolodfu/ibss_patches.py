@@ -1,4 +1,4 @@
-"""Exact mBoot-18000.120.36 iBSS writes used by T8020 yoloDFU."""
+"""T8020 iBSS patches for yoloDFU — supports tvOS 26.5 and 26.6."""
 
 from __future__ import annotations
 
@@ -7,7 +7,12 @@ import hashlib
 
 
 IMAGE_BASE = 0x19C040000
-EXPECTED_INPUT_SHA256 = "c8d4aebc681d38a8925f3b86d0fa54cac23c39d525e53f088fd21c8045dc8f4d"
+ACCEPTED_INPUT_SHA256 = {
+    # tvOS 26.5 — mBoot-18000.120.36
+    "c8d4aebc681d38a8925f3b86d0fa54cac23c39d525e53f088fd21c8045dc8f4d",
+    # tvOS 26.6 — mBoot-18000.120.40
+    "44b8df7038b23b1bda0e7d47a295c9e0cfdbf5c4aa414405d4f30855a6fbc0e8",
+}
 
 IMAGE4_PROPERTY_CALLBACK_RESULT_VA = 0x19C066268
 IMAGE4_PROPERTY_CALLBACK_RESULT_OLD = bytes.fromhex("e0 03 14 aa")
@@ -260,10 +265,10 @@ def apply_yolodfu_base_patches(data: bytearray) -> PatchNote:
 
 def build_yolodfu_base(input_data: bytes, boot_args: str) -> tuple[bytearray, list[PatchNote]]:
     input_hash = digest(input_data)
-    if input_hash != EXPECTED_INPUT_SHA256:
+    if input_hash not in ACCEPTED_INPUT_SHA256:
         raise SystemExit(
             "input sha256 mismatch\n"
-            f"expected: {EXPECTED_INPUT_SHA256}\n"
+            f"accepted: {', '.join(sorted(ACCEPTED_INPUT_SHA256))}\n"
             f"actual:   {input_hash}"
         )
 

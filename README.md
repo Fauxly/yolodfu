@@ -6,11 +6,12 @@ image-resident wrapper installs an owned EL1 continuation, the continuation
 recreates the required ROM state and translation regime, and the ROM DFU
 consumer receives a 512-byte loader plus compressed Pongo image.
 
-The supported iBSS input is `mBoot-18000.120.36` for j305 on tvOS 26.5
-(`23L471`) with SHA-256:
+The supported iBSS inputs are `mBoot-18000.120.36` (tvOS 26.5, `23L471`) and
+`mBoot-18000.120.40` (tvOS 26.6, `23L772`) for j305. Accepted SHA-256 values:
 
 ```
-c8d4aebc681d38a8925f3b86d0fa54cac23c39d525e53f088fd21c8045dc8f4d
+c8d4aebc681d38a8925f3b86d0fa54cac23c39d525e53f088fd21c8045dc8f4d  (26.5)
+44b8df7038b23b1bda0e7d47a295c9e0cfdbf5c4aa414405d4f30855a6fbc0e8  (26.6)
 ```
 
 Firmware binaries are not included. Supply a decrypted iBSS and a separately
