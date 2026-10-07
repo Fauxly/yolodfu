@@ -12,6 +12,16 @@ PATCHED_IBSS ?= $(BUILD)/ibss.yolodfu.bin
 PONGO_INPUT ?=
 PONGO_CONTAINER ?= $(BUILD)/pongo-container.bin
 
+# Per-build yolo stub cave addresses — single source: tools/stub_addrs.py,
+# derived from the iBSS input hash so the stubs are assembled for the exact
+# cave they are installed at (patch_ibss cross-checks this too). Falls back to
+# the 26.x caves when IBSS_INPUT is unset or unknown.
+STUB_ADDRS := $(shell $(PYTHON) tools/stub_addrs.py "$(IBSS_INPUT)" 2>/dev/null)
+WRAPPER_VA := $(patsubst WRAPPER_VA=%,%,$(filter WRAPPER_VA=%,$(STUB_ADDRS)))
+RUNTIME_VA := $(patsubst RUNTIME_VA=%,%,$(filter RUNTIME_VA=%,$(STUB_ADDRS)))
+WRAPPER_VA := $(if $(WRAPPER_VA),$(WRAPPER_VA),0x19c0ef318)
+RUNTIME_VA := $(if $(RUNTIME_VA),$(RUNTIME_VA),0x19c17d7b8)
+
 .PHONY: all runtime loader patch container audit clean
 
 all: runtime loader $(BUILD)/build-container
@@ -42,17 +52,17 @@ $(BUILD)/runtime.bin: $(BUILD)/runtime.elf
 	$(LD_LLD) --oformat=binary -T $(LINK)/runtime.ld $(BUILD)/runtime.o -o $@
 
 $(BUILD)/hook.o: $(SRC)/hook.S | $(BUILD)
-	$(CLANG) -target aarch64-none-elf -c $< -o $@
+	$(CLANG) -target aarch64-none-elf -DWRAPPER_VA=$(WRAPPER_VA) -c $< -o $@
 
 $(BUILD)/hook.bin: $(BUILD)/hook.o
 	$(LD_LLD) --oformat=binary -T $(LINK)/hook.ld $< -o $@
 
 $(BUILD)/wrapper.o: $(SRC)/wrapper.S $(BUILD)/runtime.bin | $(BUILD)
-	$(CLANG) -target aarch64-none-elf \
+	$(CLANG) -target aarch64-none-elf -DRUNTIME_VA=$(RUNTIME_VA) \
 		-DYOLODFU_RUNTIME_SIZE=$$(wc -c < $(BUILD)/runtime.bin | tr -d ' ') -c $< -o $@
 
 $(BUILD)/wrapper.bin: $(BUILD)/wrapper.o
-	$(LD_LLD) --oformat=binary -T $(LINK)/wrapper.ld $< -o $@
+	$(LD_LLD) --oformat=binary --defsym WRAPPER_VA=$(WRAPPER_VA) -T $(LINK)/wrapper.ld $< -o $@
 
 $(BUILD)/loader.o: loader/loader_t8020.S | $(BUILD)
 	$(CLANG) -target aarch64-none-elf -c $< -o $@

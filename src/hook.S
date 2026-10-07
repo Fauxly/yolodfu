@@ -3,9 +3,12 @@
 .p2align 2
 
 // Copied trampoline hook at runtime PC 0x870000088.
-// The wrapper itself remains in the iBSS image at 0x19c0ef1f8.
+// The wrapper itself remains in the iBSS image at WRAPPER_VA (per-build cave).
+#ifndef WRAPPER_VA
+#error "define WRAPPER_VA"
+#endif
 _start:
-    movz x16, #0xf1f8
-    movk x16, #0x9c0e, lsl #16
-    movk x16, #0x1, lsl #32
+    movz x16, #(WRAPPER_VA & 0xffff)
+    movk x16, #((WRAPPER_VA >> 16) & 0xffff), lsl #16
+    movk x16, #((WRAPPER_VA >> 32) & 0xffff), lsl #32
     blr  x16

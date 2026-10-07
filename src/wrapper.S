@@ -29,7 +29,7 @@ _start:
     orr  w8, w8, w9
     str  w8, [x21]
 
-    ldr  x22, =0x19c17d7b8
+    ldr  x22, =RUNTIME_VA
     ldr  x23, __yolodfu_runtime_size
     mov  x24, x20
 2:
